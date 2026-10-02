@@ -5,6 +5,14 @@ Unity 6.0.79f1 / URP 17.0.4向けのLED表示と映像連動照明のプロジ�
 
 ![LED Gallery](Assets/LEDGallery/Preview/Gallery.png)
 
+RGB LEDの拡大です。各セルに並ぶR/G/Bの素子と、その間の隙間を確認できます。
+
+![RGB LEDの素子と粒感の拡大](Assets/LEDGallery/Preview/RgbMacro.png)
+
+固定カメラで約12秒間記録したGIFです。映像の色に合わせて、標準URP Litの床へ当たるライトの色が変わります。
+
+![LED映像に連動して床の受光色が変化するGIF](Documentation/Images/LitColorSpill.gif)
+
 ## サンプルを見る
 
 1. このリポジトリをcloneし、Unity Hubから開きます。
@@ -71,6 +79,8 @@ unity status --json
 ./Tools/Verify-Consumer.ps1
 ./Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0'
 ```
+
+READMEのGIFを撮り直す場合は、LEDGalleryをPlayし、VideoPlayerの準備完了後に `./Tools/Record-ReadmePreview.ps1` を実行します。UnityCLI経由で実描画を記録し、FFmpegでGIFへ変換します。撮影中だけカメラの構図を変更し、終了後に戻します。動画のフレームが進まない場合はエラーにして、静止したGIFの出力を防ぎます。
 
 テストは反射の数式、シェーダーコンパイル、RGB素子のGPU出力、A/Bフェード、GPU色集計、通常のURP Litの受光とRendering Layers、ライトの自動追従・個別調整・再生成、標準VideoPlayerの再生・一時停止・停止を対象にしています。
 実行ログは `Logs/LEDWall` に保存します。Library、Temp、ビルド出力はGitへ含めません。

@@ -36,3 +36,11 @@ SHA-256：`1604d5570de97b02e1c55a2936d7f6a30d82a1c20c9d1a6c65df36ea487dc306`
 公開Git URLは `Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0'` で導入を確認しました。PackageSourceはGit、解決されたコミットは `a0ee21b0395bc4574bfc33af1f7523729a499c75` で公開タグv0.1.0と一致しました。5シェーダー・2パネル・1つの標準VideoPlayerの参照が解決し、Missing ScriptやサンプルControllerはありません。
 リポジトリは [MizoTake/UnityLEDSystem](https://github.com/MizoTake/UnityLEDSystem) です。mainとv0.1.0タグをpushしています。
 Windows Playerはビルドまでの確認です。再生・GPU受光の実測はEditorのPlayModeで行いました。D3D12、macOS、モバイル、WebGL、XR、他のURPバージョンでの実行は未検証です。独自コード・生成メディアの再利用ライセンスは未指定です。
+
+## READMEの画像・GIF
+
+READMEに `Assets/LEDGallery/Preview/RgbMacro.png` を掲載し、R/G/B素子の並びと隙間を確認できるようにしました。
+`Documentation/Images/LitColorSpill.gif` は、ライトの設定を変えず、固定カメラでUnityの実描画を記録した12秒のループGIFです。960×540、12 fps、144フレーム、7,292,836 bytesです。実キャプチャは142フレームで、記録された動画フレーム番号も142種類でした。GIFの再サンプリングとパレット変換後にも136種類の異なる描画フレームがありました。
+床の領域（x=260〜499、y=410〜499）の平均RGB値の最大・最小差は約15.94 / 9.47 / 17.37（0〜255の値）でした。映像の動きと床の受光色の変化を目視でも確認しています。GIFのループ指定、12,000 msの再生時間、README内の画像リンクの存在も確認しました。
+最初のキャプチャでは動画フレームが進まなかったため、その結果は採用せず、未保存のシーン変更がないことを確認してEditorを開き直し、再記録しました。録画スクリプトには動画のフレーム進行チェックを追加しています。撮影後はカメラの位置・回転を元に戻しました。
+生成手順は `Tools/Record-ReadmePreview.ps1`、詳細な検証値は `Logs/LEDWall/readme-media-result.json` にあります。コア実装・サンプルシーン・v0.1.0タグは変更していません。
