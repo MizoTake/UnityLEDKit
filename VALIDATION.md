@@ -10,8 +10,11 @@
 | Windows Playerビルド | Succeeded、エラー0、警告1 | `Logs/LEDWall/windows-build.json` |
 | UPM構成監査 | エラー0、警告0 | `audit_upm_package.py --fail-on warning` |
 | 新規プロジェクトへのtgz導入 | 成功 | `Logs/LEDWall/consumer-result.json` |
+| 新規プロジェクトへの公開Git URL導入 | 成功、PackageSource=Git、タグ対象のコミットと一致 | `Logs/LEDWall/git-consumer-result.json` |
 | 配布ファイルの一致 | 109ファイルのSHA-256が原本と一致 | `Logs/LEDWall/distribution-result.json` |
 | 公開前ソース確認 | UTF-8、検出対象の秘密鍵・トークン・個人パス・生成ディレクトリの混入なし | `Logs/LEDWall/source-audit.json` |
+| 公開リモートのファイル照合 | 233ファイルのGit blobがローカルと一致、欠落・混入なし | `Logs/LEDWall/remote-tree-result.json` |
+| Git archiveからのUPM構成監査 | 空白・日本語を含む新規パスでエラー0、警告0 | `audit_upm_package.py --fail-on warning` |
 
 GPUテストではRGBの3素子を個別描画し、A/Bフェードの0・0.5・1を確認しました。GPU集計色が実際のライトへ渡り、通常のURP Litの床ピクセルの受光色が変わること、異なるRendering Layersでは受光しないことも検証しました。
 ライトの標準設定が自動であること、LedPanelの輝度・サイズへの追従、明示的な個別調整、CullingMask・Rendering Layers・影設定の再生成後の維持を確認しました。
@@ -30,5 +33,6 @@ GPUテストではRGBの3素子を個別描画し、A/Bフェードの0・0.5・
 
 SHA-256：`1604d5570de97b02e1c55a2936d7f6a30d82a1c20c9d1a6c65df36ea487dc306`
 
-公開Git URLの検証はpush後に `Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0'` で実行します。
+公開Git URLは `Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0'` で導入を確認しました。PackageSourceはGit、解決されたコミットは `a0ee21b0395bc4574bfc33af1f7523729a499c75` で公開タグv0.1.0と一致しました。5シェーダー・2パネル・1つの標準VideoPlayerの参照が解決し、Missing ScriptやサンプルControllerはありません。
+リポジトリは [MizoTake/UnityLEDSystem](https://github.com/MizoTake/UnityLEDSystem) です。mainとv0.1.0タグをpushしています。
 Windows Playerはビルドまでの確認です。再生・GPU受光の実測はEditorのPlayModeで行いました。D3D12、macOS、モバイル、WebGL、XR、他のURPバージョンでの実行は未検証です。独自コード・生成メディアの再利用ライセンスは未指定です。
