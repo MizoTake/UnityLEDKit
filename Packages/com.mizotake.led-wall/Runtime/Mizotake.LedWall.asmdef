@@ -1,0 +1,6 @@
+{
+  "name": "Mizotake.LedWall",
+  "rootNamespace": "Mizotake.LedWall",
+  "references": ["Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"],
+  "autoReferenced": true
+}

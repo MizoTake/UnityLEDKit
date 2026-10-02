@@ -1,0 +1,6 @@
+{
+  "name": "Mizotake.LedWall.Runtime.Tests",
+  "rootNamespace": "Mizotake.LedWall.Tests",
+  "references": ["Mizotake.LedWall", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

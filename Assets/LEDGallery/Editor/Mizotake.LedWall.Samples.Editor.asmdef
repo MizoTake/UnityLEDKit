@@ -1,0 +1,6 @@
+{
+  "name": "Mizotake.LedWall.Samples.Editor",
+  "rootNamespace": "Mizotake.LedWall.Samples.Editor",
+  "references": ["Mizotake.LedWall", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Core.Editor", "Unity.RenderPipelines.Universal.Runtime"],
+  "includePlatforms": ["Editor"]
+}

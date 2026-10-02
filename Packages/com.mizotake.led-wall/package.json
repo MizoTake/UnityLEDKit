@@ -1,0 +1,23 @@
+{
+  "name": "com.mizotake.led-wall",
+  "version": "0.1.0",
+  "displayName": "LED Wall for URP",
+  "description": "Dual-texture HDR LED panels with native VideoPlayer input, automatic GPU-sampled colored lighting for ordinary URP Lit receivers, and optional planar reflection.",
+  "unity": "6000.0",
+  "author": { "name": "MizoTake", "url": "https://github.com/MizoTake" },
+  "documentationUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/v0.1.0/Packages/com.mizotake.led-wall/Documentation~/index.md",
+  "changelogUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/v0.1.0/Packages/com.mizotake.led-wall/CHANGELOG.md",
+  "licensesUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/v0.1.0/Packages/com.mizotake.led-wall/LICENSE.md",
+  "repository": { "type": "git", "url": "https://github.com/MizoTake/UnityLEDSystem.git", "directory": "Packages/com.mizotake.led-wall" },
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "17.0.4"
+  },
+  "keywords": ["led", "video", "urp", "lighting", "crossfade"],
+  "samples": [
+    {
+      "displayName": "LED Gallery",
+      "description": "Original procedural video and still, RGB and diffused panels, dual texture fading, bloom, and a standard URP Lit floor receiving video colors.",
+      "path": "Samples~/LEDGallery"
+    }
+  ]
+}

@@ -1,5 +1,13 @@
 {
   "dependencies": {
+    "com.mizotake.led-wall": {
+      "version": "file:com.mizotake.led-wall",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.render-pipelines.universal": "17.0.4"
+      }
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.13",
       "depth": 0,

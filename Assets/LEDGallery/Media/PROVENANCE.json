@@ -1,0 +1,19 @@
+{
+  "title": "Neon Orbits",
+  "origin": "Original procedural mathematical animation and still generated for LED Gallery",
+  "external_media": [],
+  "audio": false,
+  "size": [
+    1280,
+    720
+  ],
+  "fps": 30,
+  "seconds": 12,
+  "encoder": "h264_nvenc",
+  "profile": "H.264 baseline, no B frames",
+  "color_space": "BT.709, limited range",
+  "sha256": "f506a443f3d37c92770f6b99044fe64a564eb2f365d394b7cfbd534f9ca5c127",
+  "poster_sha256": "301757aa670df58d0a0bb042b7bf3f3a3e6baf625f14ab2d80e207b44f6ee93d",
+  "still_sha256": "42da82317cc9f96f920453481b01394c249795440781a97c2650409356127c33",
+  "generator": "Tools/generate_sample_video.py"
+}

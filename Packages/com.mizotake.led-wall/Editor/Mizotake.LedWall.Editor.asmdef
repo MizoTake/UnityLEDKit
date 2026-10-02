@@ -1,0 +1,7 @@
+{
+  "name": "Mizotake.LedWall.Editor",
+  "rootNamespace": "Mizotake.LedWall.Editor",
+  "references": ["Mizotake.LedWall"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}
