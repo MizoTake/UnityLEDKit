@@ -5,7 +5,7 @@ Unity 6.0.79f1 / URP 17.0.4向けのLED表示と映像連動照明のプロジ�
 
 ![LED Gallery](Assets/LEDGallery/Preview/Gallery.png)
 
-RGB LEDの拡大です。各セルに並ぶR/G/Bの素子と、その間の隙間を確認できます。
+RGB LEDの拡大です。グレーの検証入力を使い、R/G/Bの素子、レンズの丸みとハイライト、黒い基板を確認できます。Unityの実描画を撮影しています。
 
 ![RGB LEDの素子と粒感の拡大](Assets/LEDGallery/Preview/RgbMacro.png)
 
@@ -13,11 +13,17 @@ RGB LEDの拡大です。各セルに並ぶR/G/Bの素子と、その間の隙�
 
 ![LED映像に連動して床の受光色が変化するGIF](Documentation/Images/LitColorSpill.gif)
 
+基板・レンズのPBR質感、面積平均による映像の色光、時間補間、床・布・金属の素材差を含む改善版です。Git URLの `#main` で現在の実装を導入できます。Package Managerが解決したGitコミットはpackages-lock.jsonに記録されます。
+
+同じポスターと固定カメラで撮影した変更前（左）・変更後（右）です。
+
+![床・筐体・素材の変更前と変更後](Documentation/Images/QualityComparison.png)
+
 ## サンプルを見る
 
 1. このリポジトリをcloneし、Unity Hubから開きます。
 2. `Assets/LEDGallery/Scenes/LEDGallery.unity` を開いてPlayします。サンプル用URP設定は適用済みで、カメラは固定です。
-3. `01 / RGB LED` または `02 / Diffused LED` のLedPanelをInspectorで選びます。`Transition` は0で動画A、1で静止画B、0.5で半々になります。Brightness、Resolution、Diffusionも再生中に調整できます。
+3. `01 / RGB LED` または `02 / Diffused LED` のLedPanelをInspectorで選びます。`Transition` は0で動画A、1で静止画B、0.5で半々になります。Brightness、Tint、Resolution、Fill、Diffusion、Content Rectも再生中に調整できます。
 4. `Shared Video Player` の標準VideoPlayerが動画を再生します。別の動画・URLへの差し替え、再生・停止・ループ・音声はVideoPlayer側で設定します。LedPanelのSourceとSecondary Sourceには別々のVideoPlayerも指定できます。
 
 サンプルのControllerによるプロパティの上書きはありません。Play中の変更はUnity標準どおり終了時に戻るため、保存したい初期値はEditModeで変更してください。
@@ -30,6 +36,7 @@ RGB LEDの拡大です。各セルに並ぶR/G/Bの素子と、その間の隙�
 LedPanelと同じGameObjectの `LedPanelLighting` は映像、フェード、輝度、パネルのワールドサイズ・向きを参照します。
 `Override Light Parameters` は標準でOFFです。輝度やTransformを変更すると生成ライトも追従します。光量・照射距離・角度を個別に調整したい場合だけONにしてください。
 Culling Mask、Rendering Layers、影の設定は別に指定できます。生成ライトの数を変更しても再適用します。生成された子Lightの値は自動更新されるため、設定はLedPanelLightingのInspectorで行います。
+Soft Distributionは標準でONです。Response Secondsは色変化のなめらかさ（標準0.08秒、0で即時）、Scene Cut Thresholdは色の急変で補間をリセットするしきい値です。Sampling Resolutionで集計画像の精度とGPUメモリーを調整できます。Material側のLens Curvature、Lens Smoothness、Housing Smoothnessで表面の質感を調整します。
 URPの受光対象の限定にはRendering Layersを使用してください。サンプルではURP AssetのRendering Layersを有効にしています。
 
 ## UPM導入
@@ -37,13 +44,13 @@ URPの受光対象の限定にはRendering Layersを使用してください。�
 Unity 6.0 / URP 17のプロジェクトで、Package Managerの「Install package from git URL…」へ次のURLを入力します。GitコマンドがPATHに必要です。
 
 ```text
-https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0
+https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main
 ```
 
 `Packages/manifest.json`へ追加する場合の依存エントリーです。
 
 ```json
-"com.mizotake.led-wall": "https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0"
+"com.mizotake.led-wall": "https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main"
 ```
 
 Package Managerの `LED Wall for URP` > Samplesから `LED Gallery` をImportします。作成されたフォルダー内の `Scenes/LEDGallery.unity` を開いてPlayしてください。
@@ -57,6 +64,7 @@ Package Managerの `LED Wall for URP` > Samplesから `LED Gallery` をImportし
 
 `NeonOrbits.mp4` は12秒、1280×720、30 fps、音声なしの数学的なアニメーションです。`Prism.png` とポスターもこのプロジェクトで生成しています。サンプルメディアには外部の映像、音楽、画像、ブランド素材を使用していません。
 生成コードは `Tools/generate_sample_video.py`、由来とハッシュは `Assets/LEDGallery/Media/PROVENANCE.json` に記録しています。
+床・布・金属のサーフェスマップもオリジナルの数式からGPUで生成します。生成処理は `Assets/LEDGallery/Shaders/GallerySurface.shader` と `Editor/LedGalleryBuilder.cs`、由来は `Assets/LEDGallery/Surfaces/PROVENANCE.json` にあります。Gallery再構築メニューで再生成できます。
 GPUのH.264 NVENC、Baseline、Bフレームなし、BT.709の色メタデータで出力しています。
 
 ```powershell
@@ -77,10 +85,11 @@ unity status --json
 ./Tools/Export-Upm.ps1
 ./Tools/Verify-Distribution.ps1
 ./Tools/Verify-Consumer.ps1
-./Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0'
+./Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main'
 ```
 
 READMEのGIFを撮り直す場合は、LEDGalleryをPlayし、VideoPlayerの準備完了後に `./Tools/Record-ReadmePreview.ps1` を実行します。UnityCLI経由で実描画を記録し、FFmpegでGIFへ変換します。撮影中だけカメラの構図を変更し、終了後に戻します。動画のフレームが進まない場合はエラーにして、静止したGIFの出力を防ぎます。
+静止画は `./Tools/Capture-ReadmeStills.ps1` で撮影できます。Galleryは元のポスター、RGBの拡大はグレーの検証入力を使います。撮影後にカメラとLedPanelの設定を戻します。
 
 テストは反射の数式、シェーダーコンパイル、RGB素子のGPU出力、A/Bフェード、GPU色集計、通常のURP Litの受光とRendering Layers、ライトの自動追従・個別調整・再生成、標準VideoPlayerの再生・一時停止・停止を対象にしています。
 実行ログは `Logs/LEDWall` に保存します。Library、Temp、ビルド出力はGitへ含めません。

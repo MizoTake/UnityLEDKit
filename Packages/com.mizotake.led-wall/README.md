@@ -5,13 +5,13 @@ Unity 6.0 / URP 17用のLED表示と映像連動照明です。
 Package Managerの「Install package from git URL…」に次のURLを入力します。
 
 ```text
-https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0
+https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main
 ```
 
-- `Mizotake/LED Wall/RGB LED`：RGB素子、距離に応じたフィルタリング、HDR発光。
-- `Mizotake/LED Wall/Diffused LED`：拡散レンズ型のLED表示。
+- `Mizotake/LED Wall/RGB LED`：RGB素子、距離に応じたフィルタリング、HDR発光、PBR基板とレンズ。
+- `Mizotake/LED Wall/Diffused LED`：平均発光量を揃えた拡散レンズ型のLED表示。
 - 2種類のテクスチャ・動画を `_Transition` で線形フェード。
-- `LedPanelLighting`：LedPanelの映像・フェード・輝度・サイズからSpot Lightを自動設定して標準URP Litを照明。個別調整は標準でOFF。
+- `LedPanelLighting`：映像・Tint・UV・フェード・輝度・サイズからSpot Lightを自動設定して標準URP Litを照明。GPU面積平均、線形色の時間補間、カット検知、柔らかなCookie配光。個別調整は標準でOFF。
 - `Mizotake/LED Wall/Reflective Floor`：必要な場合だけ使う平面反射床。
 - `LED Gallery` サンプル：オリジナル動画、静止画、固定カメラ、URP設定、Inspectorから調整できるシーン。
 

@@ -1,0 +1,45 @@
+{
+    "origin": "Original procedural surface maps generated on the GPU",
+    "generator": "Shaders/GallerySurface.shader and Editor/LedGalleryBuilder.cs",
+    "resolution": 1024,
+    "thirdPartyImages": false,
+    "license": "No additional license granted; see the package LICENSE.md",
+    "files": [
+        {
+            "path": "BrushedMetal-0.png",
+            "sha256": "734ea5a74e3fe28da944f346f79c976a161c1ed5e21e7a5d14c03799bdd85e0c"
+        },
+        {
+            "path": "BrushedMetal-1.png",
+            "sha256": "dbfcc54571b3dbb6365e0962c606a1d735dc2d6a7dfd83bc54ff305763a54f70"
+        },
+        {
+            "path": "BrushedMetal-2.png",
+            "sha256": "babddce16ede166364087aa1506f8b5807c31c64a4054820dc50502e894307eb"
+        },
+        {
+            "path": "Fabric-0.png",
+            "sha256": "bb86d74eef4153a3f932875a0dc1d6542a5ca62784cf483830a39515af852aaa"
+        },
+        {
+            "path": "Fabric-1.png",
+            "sha256": "99bf87309bac3f69c4ccdb56d50a480f492c3bbf9981e8be07676e436086d3d5"
+        },
+        {
+            "path": "Fabric-2.png",
+            "sha256": "c1496ee0c53e5a0202965d56814c9b5023989064a5a9df47a3677c4d67b112b2"
+        },
+        {
+            "path": "Floor-0.png",
+            "sha256": "32371363b4d3b2204f47be02d9adde9e0eb5225a531ba90365b4b35ed74841df"
+        },
+        {
+            "path": "Floor-1.png",
+            "sha256": "8338f13ee9ef68007a10acee448f4f19405b6fd964f731fb942b13ca14e888a4"
+        },
+        {
+            "path": "Floor-2.png",
+            "sha256": "bc77cebc375c5ae13756e0a4df0b6165d736d810e8c33e946b67a4962476a183"
+        }
+    ]
+}

@@ -5,9 +5,9 @@
   "description": "Dual-texture HDR LED panels with native VideoPlayer input, automatic GPU-sampled colored lighting for ordinary URP Lit receivers, and optional planar reflection.",
   "unity": "6000.0",
   "author": { "name": "MizoTake", "url": "https://github.com/MizoTake" },
-  "documentationUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/v0.1.0/Packages/com.mizotake.led-wall/Documentation~/index.md",
-  "changelogUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/v0.1.0/Packages/com.mizotake.led-wall/CHANGELOG.md",
-  "licensesUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/v0.1.0/Packages/com.mizotake.led-wall/LICENSE.md",
+  "documentationUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/main/Packages/com.mizotake.led-wall/Documentation~/index.md",
+  "changelogUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/main/Packages/com.mizotake.led-wall/CHANGELOG.md",
+  "licensesUrl": "https://github.com/MizoTake/UnityLEDSystem/blob/main/Packages/com.mizotake.led-wall/LICENSE.md",
   "repository": { "type": "git", "url": "https://github.com/MizoTake/UnityLEDSystem.git", "directory": "Packages/com.mizotake.led-wall" },
   "dependencies": {
     "com.unity.render-pipelines.universal": "17.0.4"

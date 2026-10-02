@@ -15,6 +15,7 @@ namespace Mizotake.LedWall
         [SerializeField, Range(0f, 1f)] private float transition;
         [SerializeField] private Vector2Int resolution = new Vector2Int(256, 144);
         [SerializeField, Range(0f, 20f)] private float brightness = 2.5f;
+        [SerializeField, ColorUsage(false, true)] private Color tint = Color.white;
         [SerializeField, Range(0f, 1f)] private float rgbSeparation = 1f;
         [SerializeField, Range(0.2f, 0.95f)] private float fill = 0.72f;
         [SerializeField, Range(0f, 1f)] private float diffusion = 0.25f;
@@ -26,6 +27,7 @@ namespace Mizotake.LedWall
         private static readonly int TransitionId = Shader.PropertyToID("_Transition");
         private static readonly int Grid = Shader.PropertyToID("_LedResolution");
         private static readonly int Brightness = Shader.PropertyToID("_Brightness");
+        private static readonly int TintId = Shader.PropertyToID("_Tint");
         private static readonly int RgbSeparation = Shader.PropertyToID("_RgbSeparation");
         private static readonly int Fill = Shader.PropertyToID("_Fill");
         private static readonly int Diffusion = Shader.PropertyToID("_Diffusion");
@@ -38,11 +40,25 @@ namespace Mizotake.LedWall
         public float Transition { get => transition; set => transition = Mathf.Clamp01(value); }
         public Texture PrimaryOutput => GetVideoTexture(source, texture);
         public Texture SecondaryOutput => GetVideoTexture(secondarySource, secondaryTexture != null ? secondaryTexture : PrimaryOutput);
-        public Vector4 ContentRect => contentRect;
+        public Vector4 ContentRect { get => contentRect; set => contentRect = value; }
+        public Color Tint { get => tint; set => tint = value; }
+        public Color EmissionTint => QualitySettings.activeColorSpace == ColorSpace.Linear ? tint.linear : tint;
+        public Vector4 SamplingContentRect
+        {
+            get
+            {
+                if (target == null) target = GetComponent<Renderer>();
+                var material = target != null ? target.sharedMaterial : null;
+                var scale = material != null && material.HasProperty(BaseMap) ? material.GetTextureScale("_BaseMap") : Vector2.one;
+                var offset = material != null && material.HasProperty(BaseMap) ? material.GetTextureOffset("_BaseMap") : Vector2.zero;
+                return new Vector4(scale.x * contentRect.x, scale.y * contentRect.y, offset.x * contentRect.x + contentRect.z, offset.y * contentRect.y + contentRect.w);
+            }
+        }
         public Vector2Int Resolution { get => resolution; set => resolution = new Vector2Int(Mathf.Max(1, value.x), Mathf.Max(1, value.y)); }
         public float BrightnessValue { get => brightness; set => brightness = Mathf.Max(0f, value); }
         public float RgbSeparationValue { get => rgbSeparation; set => rgbSeparation = Mathf.Clamp01(value); }
         public float DiffusionValue { get => diffusion; set => diffusion = Mathf.Clamp01(value); }
+        public float FillValue { get => fill; set => fill = Mathf.Clamp(value, 0.2f, 0.95f); }
 
         private void OnEnable() => Apply();
         private void LateUpdate() => Apply();
@@ -62,6 +78,8 @@ namespace Mizotake.LedWall
             properties.SetFloat(TransitionId, transition);
             properties.SetVector(Grid, new Vector4(Mathf.Max(1, resolution.x), Mathf.Max(1, resolution.y), 0f, 0f));
             properties.SetFloat(Brightness, brightness);
+            // SetVector keeps this explicitly linear value identical to the GPU lighting sampler.
+            properties.SetVector(TintId, (Vector4)EmissionTint);
             properties.SetFloat(RgbSeparation, rgbSeparation);
             properties.SetFloat(Fill, fill);
             properties.SetFloat(Diffusion, diffusion);

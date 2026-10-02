@@ -33,11 +33,13 @@ namespace Mizotake.LedWall.Tests
                 emitter.transform.position = new Vector3(0, 2, 1);
                 emitter.GetComponent<Renderer>().sharedMaterial = ledMaterial;
                 var panel = emitter.AddComponent<LedPanel>();
+                ledMaterial.SetFloat("_SurfaceLighting", 0f);
                 panel.Texture = first;
                 panel.SecondaryTexture = second;
                 panel.BrightnessValue = 2f;
                 var lighting = emitter.AddComponent<LedPanelLighting>();
                 lighting.LightGrid = Vector2Int.one;
+                lighting.ResponseSeconds = 0f; // This test measures static A/B radiance; temporal response has separate tests.
                 lighting.SamplingShader = Shader.Find("Hidden/Mizotake/LED Wall/Lighting Sampler");
                 lighting.OverrideLightParameters = true;
                 lighting.DownwardBias = 1f;

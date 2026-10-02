@@ -7,6 +7,27 @@ namespace Mizotake.LedWall.Tests
 {
     public sealed class LedAssetTests
     {
+        [Test]
+        public void PanelTintAndPhysicalSurfacePropertiesAreAvailable()
+        {
+            var item = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            try
+            {
+                var panel = item.AddComponent<LedPanel>();
+                Assert.That(new SerializedObject(panel).FindProperty("tint"), Is.Not.Null, "Tint must be controlled by LedPanel so display and lights share the value.");
+                foreach (var name in new[] { "Mizotake/LED Wall/RGB LED", "Mizotake/LED Wall/Diffused LED" })
+                {
+                    var material = new Material(Shader.Find(name));
+                    try
+                    {
+                        foreach (var property in new[] { "_LensCurvature", "_LensSmoothness", "_HousingSmoothness", "_SurfaceLighting" }) Assert.That(material.HasProperty(property), Is.True, name + ": " + property);
+                    }
+                    finally { Object.DestroyImmediate(material); }
+                }
+            }
+            finally { Object.DestroyImmediate(item); }
+        }
+
         [TestCase("Mizotake/LED Wall/RGB LED")]
         [TestCase("Mizotake/LED Wall/Diffused LED")]
         [TestCase("Mizotake/LED Wall/Reflective Floor")]

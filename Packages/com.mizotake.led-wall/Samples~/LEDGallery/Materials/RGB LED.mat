@@ -36,7 +36,11 @@ Material:
     - _Brightness: 2.5
     - _Diffusion: 0.15
     - _Fill: 0.72
+    - _HousingSmoothness: 0.2
+    - _LensCurvature: 0.45
+    - _LensSmoothness: 0.82
     - _RgbSeparation: 1
+    - _SurfaceLighting: 1
     - _Transition: 1
     - _ViewingAngle: 0.4
     m_Colors:

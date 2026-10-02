@@ -91,6 +91,7 @@ namespace Mizotake.LedWall.Tests
                 material.SetFloat("_Brightness", 1f);
                 material.SetFloat("_Diffusion", 0f);
                 material.SetFloat("_ViewingAngle", 0f);
+                material.SetFloat("_SurfaceLighting", 0f);
                 material.SetColor("_HousingColor", Color.black);
                 var camera = cameraObject.AddComponent<Camera>();
                 camera.enabled = false;
@@ -140,12 +141,25 @@ namespace Mizotake.LedWall.Tests
             var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Video.VideoClip>(UnityEditor.AssetDatabase.GUIDToAssetPath(clips[0]));
             var item = GameObject.CreatePrimitive(PrimitiveType.Quad);
             item.SetActive(false);
+            // Exercise playback with a continuously rendered native texture consumer.
+            var cameraObject = new GameObject("Native video rendered consumer");
+            var videoMaterial = new Material(Shader.Find("Mizotake/LED Wall/RGB LED"));
+            var videoTarget = new RenderTexture(128, 128, 24);
+            videoTarget.Create();
+            item.layer = 30;
+            item.GetComponent<Renderer>().sharedMaterial = videoMaterial;
+            var camera = cameraObject.AddComponent<Camera>();
+            camera.transform.position = new Vector3(0, 0, -2);
+            camera.cullingMask = 1 << 30;
+            camera.targetTexture = videoTarget;
+            camera.GetUniversalAdditionalCameraData().renderPostProcessing = false;
             var source = item.AddComponent<UnityEngine.Video.VideoPlayer>();
             source.clip = clip;
             source.renderMode = UnityEngine.Video.VideoRenderMode.APIOnly;
             source.audioOutputMode = UnityEngine.Video.VideoAudioOutputMode.None;
             source.playOnAwake = false;
             source.isLooping = true;
+            source.timeUpdateMode = UnityEngine.Video.VideoTimeUpdateMode.UnscaledGameTime;
             var panel = item.AddComponent<LedPanel>();
             panel.Source = source;
             panel.Texture = Texture2D.grayTexture;
@@ -179,7 +193,14 @@ namespace Mizotake.LedWall.Tests
                 source.Stop();
                 Assert.That(panel.PrimaryOutput, Is.SameAs(Texture2D.grayTexture));
             }
-            finally { Application.runInBackground = previousBackgroundMode; Object.Destroy(item); }
+            finally
+            {
+                Application.runInBackground = previousBackgroundMode;
+                camera.enabled = false;
+                camera.targetTexture = null;
+                videoTarget.Release();
+                Object.Destroy(item); Object.Destroy(cameraObject); Object.Destroy(videoMaterial); Object.Destroy(videoTarget);
+            }
             #else
             Assert.Ignore("Video sample integration test uses Editor asset discovery.");
             yield return null;
