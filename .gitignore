@@ -60,6 +60,8 @@ ExportedObj/
 sysinfo.txt
 
 # Builds
+/Assets/LEDWallBenchmarkInstrumentation/
+/Assets/LEDWallBenchmarkInstrumentation.meta
 *.apk
 *.aab
 *.unitypackage

@@ -8,12 +8,16 @@ using UnityEngine.Video;
 
 namespace Mizotake.LedWall
 {
+    public enum LedSamplingBackend { Compute, Blit }
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(LedPanel))]
     [DefaultExecutionOrder(300)]
     public sealed class LedPanelLighting : MonoBehaviour
     {
         [SerializeField] private Shader samplingShader;
+        [SerializeField] private LedSamplingBackend samplingBackend = LedSamplingBackend.Compute;
+        [SerializeField] private ComputeShader reductionShader;
         [SerializeField] private Vector2Int lightGrid = new Vector2Int(4, 2);
         [SerializeField, Range(1f, 30f)] private float updatesPerSecond = 15f;
         [SerializeField, Range(64, 2048), Tooltip("Maximum source dimension before the power-of-two area reduction. Higher values retain smaller bright details.")] private int samplingResolution = 2048;
@@ -39,6 +43,9 @@ namespace Mizotake.LedWall
         private LedPanel panel;
         private Material samplingMaterial;
         private RenderTexture[] reduction;
+        private LedEmissionSampler computeReduction;
+        private LedSamplingBackend allocatedBackend;
+        private ComputeShader allocatedReductionShader;
         private RenderTexture softCookie;
         private Light[] lights;
         private UniversalAdditionalLightData[] lightData;
@@ -76,6 +83,8 @@ namespace Mizotake.LedWall
         private static readonly ProfilerMarker LightMarker = new ProfilerMarker("LED Lighting.Update generated lights");
 
         public Shader SamplingShader { get => samplingShader; set => samplingShader = value; }
+        public LedSamplingBackend SamplingBackend { get => samplingBackend; set => samplingBackend = value; }
+        public long SamplingBufferBytes => computeReduction == null ? 0 : computeReduction.BufferBytes;
         public Vector2Int LightGrid { get => lightGrid; set => lightGrid = new Vector2Int(Mathf.Clamp(value.x, 1, 8), Mathf.Clamp(value.y, 1, 4)); }
         public int SamplingResolution { get => samplingResolution; set => samplingResolution = Mathf.Clamp(value, 64, 2048); }
         public float UpdatesPerSecond { get => updatesPerSecond; set => updatesPerSecond = Mathf.Clamp(value, 1f, 30f); }
@@ -134,6 +143,13 @@ namespace Mizotake.LedWall
             }
             var first = panel.PrimaryOutput != null ? panel.PrimaryOutput : Texture2D.blackTexture;
             var second = panel.SecondaryOutput != null ? panel.SecondaryOutput : first;
+            if (samplingBackend == LedSamplingBackend.Compute && reductionShader == null) reductionShader = LedEmissionSampler.DefaultShader;
+            if (samplingBackend == LedSamplingBackend.Compute && (!SystemInfo.supportsComputeShaders || reductionShader == null))
+            {
+                LastError = "Assign a supported emission Compute Shader or select the Blit sampling backend.";
+                SetLightsEnabled(false);
+                return;
+            }
             EnsureResources(first, second);
             var weight = LedLightingResponse.InterpolationWeight(Time.unscaledDeltaTime, responseSeconds);
             for (var index = 0; index < colors.Length; index++) colors[index] = Color.LerpUnclamped(colors[index], targetColors[index], weight);
@@ -156,25 +172,29 @@ namespace Mizotake.LedWall
             samplingMaterial.SetFloat(TransitionId, panel.Transition);
             samplingMaterial.SetVector(ContentRectId, rect);
             samplingMaterial.SetVector(TintId, (Vector4)panel.EmissionTint);
-            var previousTarget = RenderTexture.active;
-            try
+            if (samplingBackend == LedSamplingBackend.Compute) computeReduction.Sample(panel);
+            else
             {
-                using (SamplingMarker.Auto())
+                var previousTarget = RenderTexture.active;
+                try
                 {
-                    Graphics.Blit(first, reduction[0], samplingMaterial, 0);
-                    for (var index = 1; index < reduction.Length; index++)
+                    using (SamplingMarker.Auto())
                     {
-                        var source = reduction[index - 1];
-                        var destination = reduction[index];
-                        samplingMaterial.SetVector(ReductionStepId, new Vector4(source.width == destination.width ? 0f : 0.5f / source.width, source.height == destination.height ? 0f : 0.5f / source.height, 0, 0));
-                        Graphics.Blit(source, destination, samplingMaterial, 1);
+                        Graphics.Blit(first, reduction[0], samplingMaterial, 0);
+                        for (var index = 1; index < reduction.Length; index++)
+                        {
+                            var source = reduction[index - 1];
+                            var destination = reduction[index];
+                            samplingMaterial.SetVector(ReductionStepId, new Vector4(source.width == destination.width ? 0f : 0.5f / source.width, source.height == destination.height ? 0f : 0.5f / source.height, 0, 0));
+                            Graphics.Blit(source, destination, samplingMaterial, 1);
+                        }
                     }
                 }
+                finally { RenderTexture.active = previousTarget; }
             }
-            finally { RenderTexture.active = previousTarget; }
             requestPending = true;
             submittedAt = Time.realtimeSinceStartup;
-            pendingRequest = AsyncGPUReadback.Request(reduction[reduction.Length - 1], 0, TextureFormat.RGBAFloat, readbackCallback);
+            pendingRequest = AsyncGPUReadback.Request(computeReduction != null ? computeReduction.Output : reduction[reduction.Length - 1], 0, TextureFormat.RGBAFloat, readbackCallback);
             nextUpdate = Time.unscaledTime + 1f / Mathf.Max(1f, updatesPerSecond);
         }
 
@@ -193,25 +213,35 @@ namespace Mizotake.LedWall
             var width = grid.x * Mathf.NextPowerOfTwo(Mathf.CeilToInt(Mathf.Min(maximum, Mathf.Max(first.width, second.width)) / (float)grid.x));
             var height = grid.y * Mathf.NextPowerOfTwo(Mathf.CeilToInt(Mathf.Min(maximum, Mathf.Max(first.height, second.height)) / (float)grid.y));
             var size = new Vector2Int(Mathf.Max(grid.x, width), Mathf.Max(grid.y, height));
-            if (reduction != null && grid == allocatedGrid && size == allocatedSize && samplingMaterial.shader == samplingShader) return;
+            if (lights != null && grid == allocatedGrid && size == allocatedSize && samplingMaterial.shader == samplingShader && allocatedBackend == samplingBackend && (samplingBackend != LedSamplingBackend.Compute || allocatedReductionShader == reductionShader)) return;
             ReleaseResources();
             hasHistory = false;
             allocatedGrid = grid;
             allocatedSize = size;
+            allocatedBackend = samplingBackend;
+            allocatedReductionShader = reductionShader;
             samplingMaterial = new Material(samplingShader) { hideFlags = HideFlags.HideAndDontSave };
-            var targets = new List<RenderTexture>();
-            width = size.x;
-            height = size.y;
-            while (true)
+            if (samplingBackend == LedSamplingBackend.Compute)
             {
-                var texture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGBHalf, RenderTextureReadWrite.Linear) { name = "LED Area Reduction " + width + "x" + height, filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
-                texture.Create();
-                targets.Add(texture);
-                if (width == grid.x && height == grid.y) break;
-                width = Mathf.Max(grid.x, width / 2);
-                height = Mathf.Max(grid.y, height / 2);
+                computeReduction = new LedEmissionSampler();
+                computeReduction.Ensure(reductionShader, grid, size);
             }
-            reduction = targets.ToArray();
+            else
+            {
+                var targets = new List<RenderTexture>();
+                width = size.x;
+                height = size.y;
+                while (true)
+                {
+                    var texture = new RenderTexture(width, height, 0, RenderTextureFormat.ARGBHalf, RenderTextureReadWrite.Linear) { name = "LED Area Reduction " + width + "x" + height, filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
+                    texture.Create();
+                    targets.Add(texture);
+                    if (width == grid.x && height == grid.y) break;
+                    width = Mathf.Max(grid.x, width / 2);
+                    height = Mathf.Max(grid.y, height / 2);
+                }
+                reduction = targets.ToArray();
+            }
             softCookie = new RenderTexture(64, 64, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear) { name = "LED Soft Emitter Cookie", filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
             softCookie.Create();
             cookieAspect = -1f;
@@ -310,6 +340,7 @@ namespace Mizotake.LedWall
         {
             SetLightsEnabled(false);
             if (requestPending) { pendingRequest.WaitForCompletion(); requestPending = false; }
+            ((IDisposable)computeReduction)?.Dispose(); computeReduction = null;
             if (reduction != null)
             {
                 foreach (var texture in reduction)

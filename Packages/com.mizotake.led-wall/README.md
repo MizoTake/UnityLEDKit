@@ -12,6 +12,8 @@ https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-w
 - `Mizotake/LED Wall/Diffused LED`：平均発光量を揃えた拡散レンズ型のLED表示。
 - 2種類のテクスチャ・動画を `_Transition` で線形フェード。
 - `LedPanelLighting`：映像・Tint・UV・フェード・輝度・サイズからSpot Lightを自動設定して標準URP Litを照明。GPU面積平均、線形色の時間補間、カット検知、柔らかなCookie配光。個別調整は標準でOFF。
+- `LedColorSpill` + `LedColorSpillRendererFeature`：Computeで集計した映像色を不透明な受信面へGPU内で加算。Light生成・CPU readback不要。LayerMask、距離減衰、面の向き、簡易画面内遮蔽を使用。サンプルの標準方式。
+- `LedPanelLighting`の標準集計は2段階Compute reduction。比較用のBlitピラミッドも選択可能。
 - `Mizotake/LED Wall/Reflective Floor`：必要な場合だけ使う平面反射床。
 - `LED Gallery` サンプル：オリジナル動画、静止画、固定カメラ、URP設定、Inspectorから調整できるシーン。
 

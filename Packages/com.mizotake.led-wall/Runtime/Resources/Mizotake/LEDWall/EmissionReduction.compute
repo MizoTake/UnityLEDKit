@@ -1,0 +1,72 @@
+#pragma kernel ReduceTiles
+#pragma kernel ReduceRegions
+
+Texture2D<float4> _SourceA;
+Texture2D<float4> _SourceB;
+SamplerState sampler_SourceA;
+SamplerState sampler_SourceB;
+RWStructuredBuffer<float4> _Partial;
+RWTexture2D<float4> _Average;
+float4 _Grid; // xy: region grid, zw: pixels per region
+float4 _ContentRect;
+float4 _Tint;
+float4 _Response; // x: interpolation weight, y: reset, z: cut threshold
+float4 _SourceLod;
+float _Transition;
+int _TilesPerRegion;
+groupshared float4 sums[256];
+
+void SumGroup(uint lane)
+{
+    GroupMemoryBarrierWithGroupSync();
+    for (uint offset = 128; offset > 0; offset >>= 1)
+    {
+        if (lane < offset) sums[lane] += sums[lane + offset];
+        GroupMemoryBarrierWithGroupSync();
+    }
+}
+
+[numthreads(256, 1, 1)]
+void ReduceTiles(uint3 group : SV_GroupID, uint lane : SV_GroupIndex)
+{
+    uint pixel = group.x * 256 + lane;
+    uint2 cellSize = (uint2)_Grid.zw;
+    uint2 grid = (uint2)_Grid.xy;
+    float4 value = 0;
+    if (pixel < cellSize.x * cellSize.y)
+    {
+        uint2 cell = uint2(group.y % grid.x, group.y / grid.x);
+        uint2 coordinate = cell * cellSize + uint2(pixel % cellSize.x, pixel / cellSize.x);
+        float2 uv = ((float2)coordinate + 0.5) / (float2)(grid * cellSize);
+        uv = uv * _ContentRect.xy + _ContentRect.zw;
+        float3 color;
+        // Uniform endpoint branches avoid decoding both textures for a one-source panel.
+        if (_Transition <= 0) color = _SourceA.SampleLevel(sampler_SourceA, uv, _SourceLod.x).rgb;
+        else if (_Transition >= 1) color = _SourceB.SampleLevel(sampler_SourceB, uv, _SourceLod.y).rgb;
+        else color = lerp(_SourceA.SampleLevel(sampler_SourceA, uv, _SourceLod.x).rgb, _SourceB.SampleLevel(sampler_SourceB, uv, _SourceLod.y).rgb, _Transition);
+        value = float4(max(color * _Tint.rgb, 0), 1);
+    }
+    sums[lane] = value;
+    SumGroup(lane);
+    if (lane == 0) _Partial[group.y * _TilesPerRegion + group.x] = sums[0];
+}
+
+[numthreads(256, 1, 1)]
+void ReduceRegions(uint3 group : SV_GroupID, uint lane : SV_GroupIndex)
+{
+    float4 value = 0;
+    for (uint index = lane; index < (uint)_TilesPerRegion; index += 256)
+        value += _Partial[group.x * _TilesPerRegion + index];
+    sums[lane] = value;
+    SumGroup(lane);
+    if (lane == 0)
+    {
+        uint2 coordinate = uint2(group.x % (uint)_Grid.x, group.x / (uint)_Grid.x);
+        float3 color = sums[0].rgb / max(sums[0].a, 1);
+        float3 previous = _Average[coordinate].rgb;
+        float difference = max(abs(color.r - previous.r), max(abs(color.g - previous.g), abs(color.b - previous.b)));
+        float peak = max(1, max(max(color.r, max(color.g, color.b)), max(previous.r, max(previous.g, previous.b))));
+        bool cut = _Response.z > 0 && difference / peak >= _Response.z;
+        _Average[coordinate] = float4((_Response.y > 0 || cut) ? color : lerp(previous, color, _Response.x), 1);
+    }
+}

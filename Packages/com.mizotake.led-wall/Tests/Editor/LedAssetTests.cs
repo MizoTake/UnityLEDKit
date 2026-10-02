@@ -8,6 +8,17 @@ namespace Mizotake.LedWall.Tests
     public sealed class LedAssetTests
     {
         [Test]
+        public void ComputeReductionAndLightIndependentSpillArePackaged()
+        {
+            var compute = Resources.Load<ComputeShader>("Mizotake/LEDWall/EmissionReduction");
+            Assert.That(compute, Is.Not.Null, "The compute asset must be included in player builds and Git UPM consumers.");
+            Assert.That(compute.HasKernel("ReduceTiles"), Is.True);
+            Assert.That(compute.HasKernel("ReduceRegions"), Is.True);
+            Assert.That(typeof(LedPanel).Assembly.GetType("Mizotake.LedWall.LedColorSpillRendererFeature"), Is.Not.Null);
+            Assert.That(Shader.Find("Hidden/Mizotake/LED Wall/Color Spill"), Is.Not.Null);
+        }
+
+        [Test]
         public void PanelTintAndPhysicalSurfacePropertiesAreAvailable()
         {
             var item = GameObject.CreatePrimitive(PrimitiveType.Quad);
@@ -33,6 +44,7 @@ namespace Mizotake.LedWall.Tests
         [TestCase("Mizotake/LED Wall/Reflective Floor")]
         [TestCase("Hidden/Mizotake/LED Wall/Reflection Blur")]
         [TestCase("Hidden/Mizotake/LED Wall/Lighting Sampler")]
+        [TestCase("Hidden/Mizotake/LED Wall/Color Spill")]
         public void ShadersExistAndHaveNoCompilerErrors(string name)
         {
             var shader = Shader.Find(name);

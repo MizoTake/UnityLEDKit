@@ -13,8 +13,11 @@ foreach ($file in Get-ChildItem -LiteralPath $sourceRoot -File -Recurse) {
     $relativePath = $file.FullName.Substring($sourceRoot.Length + 1)
     $destination = Join-Path $sampleRoot $relativePath
     New-Item -ItemType Directory -Force -Path (Split-Path $destination -Parent) | Out-Null
-    Copy-Item -LiteralPath $file.FullName -Destination $destination -Force
-    if ((Get-FileHash -LiteralPath $file.FullName).Hash -ne (Get-FileHash -LiteralPath $destination).Hash) { throw "Sample hash mismatch: $relativePath" }
+    $sourceHash = (Get-FileHash -LiteralPath $file.FullName).Hash
+    if (!(Test-Path -LiteralPath $destination) -or $sourceHash -ne (Get-FileHash -LiteralPath $destination).Hash) {
+        Copy-Item -LiteralPath $file.FullName -Destination $destination -Force
+    }
+    if ($sourceHash -ne (Get-FileHash -LiteralPath $destination).Hash) { throw "Sample hash mismatch: $relativePath" }
     $count++
 }
 Write-Output "Sample synchronized: $count files, matching SHA-256 hashes."

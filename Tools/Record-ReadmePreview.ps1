@@ -27,7 +27,7 @@ var start = UnityEditor.EditorApplication.timeSinceStartup + 0.4;
 var next = start;
 var encoding = new System.Text.UTF8Encoding(false);
 var culture = System.Globalization.CultureInfo.InvariantCulture;
-System.IO.File.WriteAllText(System.IO.Path.Combine(root, "frames.csv"), "index,elapsedSeconds,videoFrame,minimumLightSamples\n", encoding);
+System.IO.File.WriteAllText(System.IO.Path.Combine(root, "frames.csv"), "index,elapsedSeconds,videoFrame,minimumEmissionSamples\n", encoding);
 camera.transform.position = new Vector3(1.1f, 4.7f, -12.5f);
 camera.transform.LookAt(new Vector3(0.4f, 2.2f, -1f));
 camera.aspect = 960f / 540f;
@@ -73,7 +73,8 @@ tick = () =>
         }
         finally { RenderTexture.active = previous; }
         times.Add(now - start);
-        var samples = UnityEngine.Object.FindObjectsByType<Mizotake.LedWall.LedPanelLighting>(FindObjectsSortMode.None).Min(item => item.CompletedSamples);
+        var samples = UnityEngine.Object.FindObjectsByType<Mizotake.LedWall.LedPanelLighting>(FindObjectsSortMode.None).Where(item => item.isActiveAndEnabled).Select(item => item.CompletedSamples)
+            .Concat(UnityEngine.Object.FindObjectsByType<Mizotake.LedWall.LedColorSpill>(FindObjectsSortMode.None).Where(item => item.isActiveAndEnabled).Select(item => item.SubmittedSamples)).DefaultIfEmpty(0).Min();
         System.IO.File.AppendAllText(System.IO.Path.Combine(root, "frames.csv"), string.Format(culture, "{0},{1:R},{2},{3}\n", frames, now - start, video.frame, samples), encoding);
         frames++;
         next = now + 1.0 / {{FPS}};

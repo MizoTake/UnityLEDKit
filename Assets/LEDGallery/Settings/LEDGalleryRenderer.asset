@@ -26,6 +26,21 @@ MonoBehaviour:
     BlurQuality: 0
     Falloff: 100
     SampleCount: -1
+--- !u!114 &-7650545374184482546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dec806c7b72da44c9f901461449a007, type: 3}
+  m_Name: LED Color Spill
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  spillShader: {fileID: 4800000, guid: 9b06945e9b1d0fc47a5e72b05e6b465b, type: 3}
+  sceneView: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -52,6 +67,7 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: -8217148486048506878}
+  - {fileID: -7650545374184482546}
   m_RendererFeatureMap: 
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 0}

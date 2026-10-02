@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- 2段階Compute reductionを追加。Light方式の標準集計をComputeへ変更し、比較用のBlitバックエンドを維持。
+- LedColorSpillとRender Graph対応LedColorSpillRendererFeatureを追加。Light生成・CPU readbackなしで、選択した不透明受信面へ映像色を加算。
+- 発光面・距離・面積・法線による拡散寄与、LayerMask、共有受信マスク、任意の画面内深度遮蔽、GPU内の色補間・履歴リセットを追加。
+- Galleryの標準をColor Spillへ変更。Inspectorと単発メニューでLight方式へ切り替え可能。
+- Compute/BlitのHDR・フェード・UV集計比較、LightなしのLit受信、マスク・発光面の向き・距離制限・カット・解放のGPUテストを追加。
 - LEDの黒い基板とレンズにURP PBR照明、曲面法線、粗さを追加。深度法線にも粒の形状を反映。
 - RGB・拡散型の粒の面積を正規化し、Fill・Diffusion・距離による平均発光量の差を抑制。
 - 9点サンプリングをGPUの面積平均ピラミッドへ変更。細かな明部を照明へ反映。

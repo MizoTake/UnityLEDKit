@@ -10,7 +10,7 @@ namespace Mizotake.LedWall.Editor
         {
             serializedObject.Update();
             using (new EditorGUI.DisabledScope(true)) EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
-            Draw("samplingShader", "lightGrid", "updatesPerSecond", "samplingResolution", "responseSeconds", "sceneCutThreshold", "softDistribution");
+            Draw("samplingBackend", "reductionShader", "samplingShader", "lightGrid", "updatesPerSecond", "samplingResolution", "responseSeconds", "sceneCutThreshold", "softDistribution");
             EditorGUILayout.Space();
             var overrides = serializedObject.FindProperty("overrideLightParameters");
             EditorGUILayout.PropertyField(overrides);

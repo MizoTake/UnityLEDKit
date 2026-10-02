@@ -22,7 +22,7 @@ public static class ConsumerSmoke
             result.version = package.version;
             result.source = package.source.ToString();
             result.gitRevision = package.git?.hash;
-            foreach (var name in new[] { "Mizotake/LED Wall/RGB LED", "Mizotake/LED Wall/Diffused LED", "Mizotake/LED Wall/Reflective Floor", "Hidden/Mizotake/LED Wall/Reflection Blur", "Hidden/Mizotake/LED Wall/Lighting Sampler" })
+            foreach (var name in new[] { "Mizotake/LED Wall/RGB LED", "Mizotake/LED Wall/Diffused LED", "Mizotake/LED Wall/Reflective Floor", "Hidden/Mizotake/LED Wall/Reflection Blur", "Hidden/Mizotake/LED Wall/Lighting Sampler", "Hidden/Mizotake/LED Wall/Color Spill" })
             {
                 var shader = Shader.Find(name);
                 if (shader == null || !shader.isSupported) throw new InvalidOperationException("Shader unavailable: " + name);
@@ -45,6 +45,10 @@ public static class ConsumerSmoke
             result.receiverShader = floor.GetComponent<Renderer>().sharedMaterial.shader.name;
             if (result.receiverShader != "Universal Render Pipeline/Lit") throw new InvalidOperationException("The floor receiver must use ordinary URP Lit.");
             if (UnityEngine.Object.FindObjectsByType<LedPanelLighting>(FindObjectsSortMode.None).Any(lighting => lighting.SamplingShader == null || lighting.OverrideLightParameters)) throw new InvalidOperationException("GPU lighting must use an assigned shader and automatic panel settings by default.");
+            if (Resources.Load<ComputeShader>("Mizotake/LEDWall/EmissionReduction") == null) throw new InvalidOperationException("The packaged Compute Shader is unavailable.");
+            var spill = UnityEngine.Object.FindObjectsByType<LedColorSpill>(FindObjectsSortMode.None);
+            if (spill.Length != 2 || spill.Any(item => !item.enabled || item.ReceiverMask != (1 << floor.layer))) throw new InvalidOperationException("The default sample must use color spill on the Lit floor.");
+            if (UnityEngine.Object.FindObjectsByType<LedPanelLighting>(FindObjectsSortMode.None).Any(item => item.enabled)) throw new InvalidOperationException("Default sample must not double count Spot Light output.");
             foreach (var root in floor.scene.GetRootGameObjects()) foreach (var transform in root.GetComponentsInChildren<Transform>(true))
             {
                 if (GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(transform.gameObject) != 0) throw new InvalidOperationException("Missing script in the imported sample: " + transform.name);

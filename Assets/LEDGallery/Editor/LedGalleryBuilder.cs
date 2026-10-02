@@ -125,6 +125,16 @@ namespace Mizotake.LedWall.Samples.Editor
             var softLighting = second.gameObject.AddComponent<LedPanelLighting>();
             softLighting.SamplingShader = Shader.Find("Hidden/Mizotake/LED Wall/Lighting Sampler");
             softLighting.LightGrid = new Vector2Int(3, 2);
+            // Keep the physically lit option available in the Inspector, without double counting emission.
+            rgbLighting.enabled = false;
+            softLighting.enabled = false;
+            var rgbSpill = main.gameObject.AddComponent<LedColorSpill>();
+            rgbSpill.ReceiverMask = 1 << 4;
+            rgbSpill.Strength = 3f;
+            var softSpill = second.gameObject.AddComponent<LedColorSpill>();
+            softSpill.ReceiverMask = 1 << 4;
+            softSpill.EmitterGrid = new Vector2Int(3, 2);
+            softSpill.Strength = 3f;
             BeveledBox(stage.transform, "Lit Receiver Cube", new Vector3(-5f, 0.42f, -3f), new Vector3(0.7f, 0.84f, 0.7f), 0.055f, floorMaterial);
             Primitive(stage.transform, "Brushed Metal Receiver Sphere", PrimitiveType.Sphere, new Vector3(1.3f, 0.45f, -2.7f), Vector3.one * 0.9f, metal);
             BeveledBox(stage.transform, "RGB Plinth", new Vector3(-1.9f, 0.21f, 0.28f), new Vector3(8.7f, 0.42f, 1.05f), 0.065f, dark);
@@ -180,6 +190,26 @@ namespace Mizotake.LedWall.Samples.Editor
             AssetDatabase.SaveAssets();
         }
 
+        [MenuItem("Tools/LED Wall/Gallery Lighting/Color Spill")]
+        public static void UseColorSpill() => SetGalleryLighting(true);
+
+        [MenuItem("Tools/LED Wall/Gallery Lighting/Generated Lights")]
+        public static void UseGeneratedLights() => SetGalleryLighting(false);
+
+        private static void SetGalleryLighting(bool spill)
+        {
+            foreach (var panel in Object.FindObjectsByType<LedPanel>(FindObjectsSortMode.None))
+            {
+                var lighting = panel.GetComponent<LedPanelLighting>();
+                var colorSpill = panel.GetComponent<LedColorSpill>();
+                if (lighting == null || colorSpill == null) continue;
+                Undo.RecordObjects(new Object[] { lighting, colorSpill }, "Change LED gallery lighting");
+                lighting.enabled = !spill;
+                colorSpill.enabled = spill;
+                EditorUtility.SetDirty(lighting); EditorUtility.SetDirty(colorSpill);
+            }
+        }
+
         private static UniversalRenderPipelineAsset CreatePipeline(string root)
         {
             var rendererPath = root + "/Settings/LEDGalleryRenderer.asset";
@@ -206,6 +236,17 @@ namespace Mizotake.LedWall.Samples.Editor
                 EditorUtility.SetDirty(renderer);
             }
             var pipelinePath = root + "/Settings/LEDGalleryURP.asset";
+            var spillFeature = renderer.rendererFeatures.Find(feature => feature is LedColorSpillRendererFeature) as LedColorSpillRendererFeature;
+            if (spillFeature == null)
+            {
+                spillFeature = ScriptableObject.CreateInstance<LedColorSpillRendererFeature>();
+                spillFeature.name = "LED Color Spill";
+                spillFeature.SpillShader = Shader.Find("Hidden/Mizotake/LED Wall/Color Spill");
+                AssetDatabase.AddObjectToAsset(spillFeature, renderer);
+                renderer.rendererFeatures.Add(spillFeature);
+                renderer.SetDirty();
+                EditorUtility.SetDirty(renderer);
+            }
             var pipeline = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(pipelinePath);
             if (pipeline == null) { pipeline = UniversalRenderPipelineAsset.Create(renderer); AssetDatabase.CreateAsset(pipeline, pipelinePath); }
             pipeline.supportsHDR = true;

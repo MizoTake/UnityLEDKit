@@ -1,5 +1,33 @@
 # 検証記録
 
+## 2026-10-03 Compute集計とRenderer Feature
+
+Unity 6.0.79f1 / URP 17.0.4 / RTX 4070 / D3D11 / Linearで、2段階のCompute reductionとLightに依存しないColor Spillを追加しました。サンプルの標準はColor Spillです。LedPanelLightingは無効で保存し、Inspectorまたは単発メニューで切り替えます。
+ComputeアセットとRenderer Featureの存在確認テストが失敗することを確認してから実装しました。追加したGPUテストはHDRフェード・UV・クロップ・3×2領域でのBlit比較（各RGB誤差0.008以内）、標準LitへのLightなしの色加算、LayerMask、発光面の裏側、距離制限、輝度0、色カット、Panel disable、リソース解放を対象にしています。
+最終のUnityCLI検証はC#コンパイル成功、EditMode 21/21、PlayMode 13/13成功で、失敗・skipは0でした。途中のEditorセッションでは、準備済みのVideoPlayerがPlay直後もpausedのままで既存の動画テストが失敗しました。未保存のシーンがないことを確認してEditorを開き直した後、動画テストを変更しない状態で一式が成功しています。再生停止の原因は特定できていません。テストログはLogs/LEDWall/{editor,playmode}-tests.jsonです。
+Render Graphのパスは入力Depth/Normalを宣言し、サンプルの発光色テクスチャと受信マスクを明示的に参照します。各記録でPassDataとグラフハンドルを設定し、受信マスクはカメラのdescriptorを基に必要なformatだけ変更します。同じ受信LayerMaskは共有します。カメラ色のコピーとグローバルテクスチャの公開は行いません。受信LayerがカメラのCullingMaskと重ならない場合はパスを投入しません。
+
+Windows Development Playerはビルド成功、エラー0・警告1です。警告は既存PipelineパッケージのRuntimePipelineConfig未設定によるPlayer側Pipeline無効化の通知です。計測用ソースはビルド時のみAssetsへコピーし、AssetDatabase.DeleteAssetで削除しました。Frame Timing Statsも元の設定へ戻しています。
+計測用ソースを含まない最終Windows x64ビルドもSucceeded、エラー0・警告1でした。生成されたRuntime DLLにColor Spill、Compute samplerと現在の診断プロパティが含まれることを確認しました。結果はLogs/LEDWall/spill-build-result.json、実行ファイルはBuilds/LEDGallery/UnityLEDSystem.exeです。
+1280×720、元の動画、15 Hzの集計、3秒ウォームアップ＋12秒計測を3方式それぞれ3回実行しました。非表示ウィンドウで自動描画が省略された初回の黒い画像は除外し、以後はSubmitRenderRequestで各フレームを明示描画しました。最終画像の色数を確認して、描画していない結果を採用しないようにしています。GPUタイムスタンプは非表示Playerでは取得できず、GPU処理時間・FPSの比較は行っていません。
+
+| 方式 | 所有テクスチャ | 集計バッファ | 集計CPU区間の中央値 | LED用Light |
+| --- | ---: | ---: | ---: | ---: |
+| Blit＋Light | 39,200,864 bytes | 0 | 0.023178 ms | 14 |
+| Compute＋Light | 36,864 bytes | 229,376 bytes | 0.012882 ms | 14 |
+| Compute＋Color Spill | 2,160 bytes | 229,376 bytes | 0.012558 ms | 0 |
+
+CPU区間はGPU命令の発行を計測し、GPUの実行時間を示すものではありません。メモリは集計クラスが所有するRTと部分和バッファで、動画、カメラ、材質テクスチャ、Render Graphの一時Depth/Normal/マスクは除外しています。Color Spillの全画面描画コストは表のCPU集計区間に含みません。詳細はLogs/LEDWall/player-benchmark-summary.jsonとplayer-{Blit,Compute,Spill}-{1,2,3}.jsonです。再現用にBuild-LightingBenchmark.ps1とRun-LightingBenchmark.ps1を追加しました。
+
+READMEのGallery静止画とGIFを現在のColor Spillで撮り直しました。GIFは960×540、12秒、144フレーム、8,108,733 bytesです。実キャプチャ143フレームの動画番号は143種類、GIF描画は137種類でした。床のROI(x=260..499,y=410..499)の平均RGBの最大最小差は12.934 / 8.194 / 14.735です。SHA-256は66159bd90d56f473a37b43cbc3433e7d10c18546083afbdd8e6cb41787ecb718です。Logs/LEDWall/spill-gif-result.jsonに記録しました。
+
+UPM構成監査はエラー0・警告0、新規tgz導入では6シェーダー・Computeアセット・2パネル・1つのVideoPlayerと標準Lit床の参照が解決しました。Color Spillが有効、Light方式が無効、Missing ScriptとサンプルControllerがないことを確認しました。配布ファイルは173件のSHA-256を照合しています。
+最終tgzのSHA-256は56e5cae928bee3a7f998a21df6568c184b7c9d3f0ed49b86118e10b37b92f236です。サンプル同期は内容が変わったファイルだけを書き換え、同一ファイルを開いている状態でも不要な上書きを避けます。全93ファイルのSHA-256を照合します。
+
+Color Spillは不透明受信面へ加える拡散色です。受信材質のBaseMap・Metallic・Smoothnessを使うPBR評価、画面外の遮蔽物、透明物の受光、独自頂点変形は対象外です。通常のPBR受光と影にはLight方式を使います。D3D12・macOS・モバイル・WebGL・XRは未検証です。
+
+以下は以前の実装時点の記録です。
+
 2026-10-02、Unity 6.0.79f1 / URP 17.0.4 / NVIDIA GeForce RTX 4070 / Direct3D11 / Linear色空間で確認しました。Editor操作、テスト、ビルド、新規プロジェクトの起動にはUnityCLIを使用しています。
 
 | 検証 | 結果 | 記録 |
