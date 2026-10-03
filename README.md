@@ -94,7 +94,7 @@ python Tools/generate_sample_video.py --still-only
 ```
 
 生成には既存環境のNumPyとFFmpegを使用します。NVENCがない生成環境では `--encoder libx264` を指定できます。
-独自コード・生成メディアの再利用ライセンスは未指定です。公開・UPM導入可能であることからMITやCC0などの許諾を推定しないでください。権利の扱いは [パッケージのLICENSE.md](Packages/com.mizotake.led-wall/LICENSE.md) に記載しています。Unity標準パッケージ・テンプレートには各提供元の条件が適用されます。
+本プロジェクトの独自コード・ドキュメント・サンプルの生成素材は [MITライセンス](LICENSE) で提供します。UPMパッケージにも同じ [LICENSE.md](Packages/com.mizotake.led-wall/LICENSE.md) を同梱しています。
 
 ## 検証
 

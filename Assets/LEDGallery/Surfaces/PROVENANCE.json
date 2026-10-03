@@ -3,7 +3,7 @@
     "generator": "Shaders/GallerySurface.shader and Editor/LedGalleryBuilder.cs",
     "resolution": 1024,
     "thirdPartyImages": false,
-    "license": "No additional license granted; see the package LICENSE.md",
+    "license": "MIT",
     "files": [
         {
             "path": "BrushedMetal-0.png",

@@ -21,4 +21,4 @@ Package ManagerのSamplesから `LED Gallery` をImportし、作成されたフ�
 パネルのInspectorでTransitionやBrightnessを変更でき、サンプル側のスクリプトが値を固定しません。Source/Secondary Sourceには標準VideoPlayerを指定します。再生操作はVideoPlayer側で行います。
 手順と制約は [Documentation~/index.md](Documentation~/index.md) にあります。
 プロジェクト全体の導入・検証手順は [UnityLEDSystem](https://github.com/MizoTake/UnityLEDSystem) にあります。
-公開ライセンスは [LICENSE.md](LICENSE.md) のとおり未指定です。
+コード・ドキュメント・サンプルの生成素材は [MITライセンス](LICENSE.md) で提供します。

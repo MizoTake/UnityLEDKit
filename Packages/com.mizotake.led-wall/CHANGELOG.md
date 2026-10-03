@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- 独自コード・ドキュメント・サンプルの生成素材をMITライセンスとして公開。
 - 2段階Compute reductionを追加。Light方式の標準集計をComputeへ変更し、比較用のBlitバックエンドを維持。
 - LedColorSpillとRender Graph対応LedColorSpillRendererFeatureを追加。Light生成・CPU readbackなしで、選択した不透明受信面へ映像色を加算。
 - 発光面・距離・面積・法線による拡散寄与、LayerMask、共有受信マスク、任意の画面内深度遮蔽、GPU内の色補間・履歴リセットを追加。

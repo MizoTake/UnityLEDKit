@@ -12,3 +12,5 @@ Play中の変更は終了時に戻ります。初期値の保存はEditModeで�
 
 別のURPプロジェクトでは必要に応じて `Tools > LED Wall > Use Gallery URP Settings` でサンプルのForward+ / HDR / Rendering Layers設定へ切り替えられます。このメニューはGraphics Settingsと現在のQualityのURP Assetを変更します。
 コアは `com.mizotake.led-wall` にあり、サンプルAssetsを参照しません。
+
+サンプルコードと生成素材は [MITライセンス](https://github.com/MizoTake/UnityLEDSystem/blob/main/Packages/com.mizotake.led-wall/LICENSE.md) で提供します。

@@ -369,7 +369,7 @@ namespace Mizotake.LedWall.Samples.Editor
             public string generator = "Shaders/GallerySurface.shader and Editor/LedGalleryBuilder.cs";
             public int resolution = 1024;
             public bool thirdPartyImages = false;
-            public string license = "No additional license granted; see the package LICENSE.md";
+            public string license = "MIT";
             public SurfaceFile[] files;
         }
 

@@ -1,6 +1,7 @@
 {
   "name": "com.mizotake.led-wall",
   "version": "0.1.0",
+  "license": "MIT",
   "displayName": "LED Wall for URP",
   "description": "Dual-texture HDR LED panels with native VideoPlayer input, Compute Shader color reduction, light-independent URP Render Graph color spill, automatic Spot Light output, and optional planar reflection.",
   "unity": "6000.0",

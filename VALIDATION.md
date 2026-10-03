@@ -1,5 +1,11 @@
 # 検証記録
 
+## 2026-10-03 MITライセンス整備
+
+独自コード・ドキュメント・サンプルの生成素材をMITライセンスへ変更しました。リポジトリのLICENSEとUPMのLICENSE.mdを同じ本文・Copyright (c) 2026 MizoTakeで揃え、package.jsonにlicense: MITを設定しました。メディアとサーフェスマップのPROVENANCE.json、両生成コード、READMEとパッケージの使用手順を更新しています。
+UnityCLIでC#コンパイル、EditMode 21/21、PlayMode 13/13が成功し、失敗・skipは0でした。UPM構成監査はエラー0・警告0、サンプル93ファイルとtgzの173ファイルはSHA-256が一致しました。元の動画・画像は変更せず、AssetsとSamples~の24件の素材ハッシュを確認しています。生成コードのMIT表記もPython ASTとEditor上のSurfaceEvidenceで確認しました。
+新規プロジェクトへのtgz導入では6シェーダー・2パネル・標準VideoPlayer・URP Lit床が解決しました。MIT本文とmetadataの照合結果はLogs/LEDWall/mit-license-result.jsonにあります。最終tgzのSHA-256はe9e0ed12294e5b4eece50cdda56df1e2ef3e5d3f7668f57bd577e05df2e8400cです。
+
 ## 2026-10-03 Compute集計とRenderer Feature
 
 Unity 6.0.79f1 / URP 17.0.4 / RTX 4070 / D3D11 / Linearで、2段階のCompute reductionとLightに依存しないColor Spillを追加しました。サンプルの標準はColor Spillです。LedPanelLightingは無効で保存し、Inspectorまたは単発メニューで切り替えます。
@@ -63,7 +69,7 @@ SHA-256：`1604d5570de97b02e1c55a2936d7f6a30d82a1c20c9d1a6c65df36ea487dc306`
 
 公開Git URLは `Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#v0.1.0'` で導入を確認しました。PackageSourceはGit、解決されたコミットは `a0ee21b0395bc4574bfc33af1f7523729a499c75` で公開タグv0.1.0と一致しました。5シェーダー・2パネル・1つの標準VideoPlayerの参照が解決し、Missing ScriptやサンプルControllerはありません。
 リポジトリは [MizoTake/UnityLEDSystem](https://github.com/MizoTake/UnityLEDSystem) です。mainとv0.1.0タグをpushしています。
-Windows Playerはビルドまでの確認です。再生・GPU受光の実測はEditorのPlayModeで行いました。D3D12、macOS、モバイル、WebGL、XR、他のURPバージョンでの実行は未検証です。独自コード・生成メディアの再利用ライセンスは未指定です。
+Windows Playerはビルドまでの確認です。再生・GPU受光の実測はEditorのPlayModeで行いました。D3D12、macOS、モバイル、WebGL、XR、他のURPバージョンでの実行は未検証です。この過去の検証時点では独自コード・生成メディアの再利用ライセンスは未指定でした。
 
 ## READMEの画像・GIF
 

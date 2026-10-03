@@ -85,3 +85,7 @@ Windows Development Playerの3回比較では、集計用の所有テクスチ�
 - [UPMパッケージ構成](https://docs.unity3d.com/6000.0/Documentation/Manual/cus-layout.html)
 - [URPのRendering Layersの有効化と受光対象の設定](https://docs.unity3d.com/6000.0/Documentation/Manual/urp/features/rendering-layers-lights.html)
 - [Git URLからのUPM導入](https://docs.unity3d.com/6000.0/Documentation/Manual/upm-git.html)
+
+## ライセンス
+
+コード・ドキュメント・サンプルの生成素材はMITライセンスで提供します。本文はパッケージ直下の `LICENSE.md` にあります。

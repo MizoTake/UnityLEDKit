@@ -65,7 +65,7 @@ def main():
     if process.wait() != 0:
         raise SystemExit('Video encoding failed; select --encoder libx264 explicitly if NVENC is unavailable.')
     temporary_video.replace(video)
-    provenance = {'title': 'Neon Orbits', 'origin': 'Original procedural mathematical animation and still generated for LED Gallery', 'external_media': [], 'audio': False, 'size': [width, height], 'fps': fps, 'seconds': seconds, 'encoder': args.encoder, 'profile': 'H.264 baseline, no B frames', 'color_space': 'BT.709, limited range', 'sha256': hashlib.sha256(video.read_bytes()).hexdigest(), 'poster_sha256': hashlib.sha256((args.output / 'NeonOrbits.png').read_bytes()).hexdigest(), 'still_sha256': hashlib.sha256((args.output / 'Prism.png').read_bytes()).hexdigest(), 'generator': 'Tools/generate_sample_video.py'}
+    provenance = {'title': 'Neon Orbits', 'origin': 'Original procedural mathematical animation and still generated for LED Gallery', 'license': 'MIT', 'external_media': [], 'audio': False, 'size': [width, height], 'fps': fps, 'seconds': seconds, 'encoder': args.encoder, 'profile': 'H.264 baseline, no B frames', 'color_space': 'BT.709, limited range', 'sha256': hashlib.sha256(video.read_bytes()).hexdigest(), 'poster_sha256': hashlib.sha256((args.output / 'NeonOrbits.png').read_bytes()).hexdigest(), 'still_sha256': hashlib.sha256((args.output / 'Prism.png').read_bytes()).hexdigest(), 'generator': 'Tools/generate_sample_video.py'}
     (args.output / 'PROVENANCE.json').write_text(json.dumps(provenance, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(provenance, indent=2))
 
