@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- UnityLEDKitへのリポジトリ改名に合わせて、導入URLとドキュメントのリンクを更新。
 - 独自コード・ドキュメント・サンプルの生成素材をMITライセンスとして公開。
 - 2段階Compute reductionを追加。Light方式の標準集計をComputeへ変更し、比較用のBlitバックエンドを維持。
 - LedColorSpillとRender Graph対応LedColorSpillRendererFeatureを追加。Light生成・CPU readbackなしで、選択した不透明受信面へ映像色を加算。
@@ -26,4 +27,4 @@
 - 任意で使えるURP平面反射床とGPUぼかしを追加。
 - 外部素材を使わず生成した動画・静止画、標準Lit受光体、固定カメラを含むGalleryサンプルを追加。Inspectorの操作を上書きするControllerは使用しない。
 - EditMode/PlayModeテストとUnityCLI検証・UPM書き出し手順を追加。
-- UnityLEDSystemリポジトリからのGit / タグ指定UPM導入手順とパッケージの案内URLを追加。
+- Git / タグ指定UPM導入手順とパッケージの案内URLを追加。

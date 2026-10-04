@@ -2,7 +2,7 @@
 
 ## UPMからの導入
 
-Package Managerの「Install package from git URL…」へ `https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main` を入力します。GitコマンドがPATHに必要です。
+Package Managerの「Install package from git URL…」へ `https://github.com/MizoTake/UnityLEDKit.git?path=/Packages/com.mizotake.led-wall#main` を入力します。GitコマンドがPATHに必要です。
 `LED Wall for URP` のSamplesから `LED Gallery` をImportすると、シーン、動画、マテリアル、設定、固定カメラがAssetsにコピーされます。作成されたフォルダー内の `Scenes/LEDGallery.unity` を開きます。
 必要な場合は `Tools > LED Wall > Use Gallery URP Settings` でサンプルのForward+ / HDR設定を適用し、Playします。このメニューはGraphics Settingsと現在のQuality設定のURP Assetを変更するので、使用中の設定を控えてから適用してください。
 UPMで導入するコアは `com.mizotake.led-wall` です。Gitリポジトリ全体をUnityプロジェクトとして開く場合は、コアとサンプルが既に入っています。

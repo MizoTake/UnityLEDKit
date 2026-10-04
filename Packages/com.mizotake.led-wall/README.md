@@ -5,7 +5,7 @@ Unity 6.0 / URP 17用のLED表示と映像連動照明です。
 Package Managerの「Install package from git URL…」に次のURLを入力します。
 
 ```text
-https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main
+https://github.com/MizoTake/UnityLEDKit.git?path=/Packages/com.mizotake.led-wall#main
 ```
 
 - `Mizotake/LED Wall/RGB LED`：RGB素子、距離に応じたフィルタリング、HDR発光、PBR基板とレンズ。
@@ -20,5 +20,5 @@ https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-w
 Package ManagerのSamplesから `LED Gallery` をImportし、作成されたフォルダー内の `Scenes/LEDGallery.unity` を開いてPlayしてください。必要に応じて `Tools > LED Wall > Use Gallery URP Settings` でサンプル用のForward+ / HDR設定を適用します。
 パネルのInspectorでTransitionやBrightnessを変更でき、サンプル側のスクリプトが値を固定しません。Source/Secondary Sourceには標準VideoPlayerを指定します。再生操作はVideoPlayer側で行います。
 手順と制約は [Documentation~/index.md](Documentation~/index.md) にあります。
-プロジェクト全体の導入・検証手順は [UnityLEDSystem](https://github.com/MizoTake/UnityLEDSystem) にあります。
+プロジェクト全体の導入・検証手順は [UnityLEDKit](https://github.com/MizoTake/UnityLEDKit) にあります。
 コード・ドキュメント・サンプルの生成素材は [MITライセンス](LICENSE.md) で提供します。

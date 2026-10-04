@@ -1,4 +1,4 @@
-# UnityLEDSystem
+# UnityLEDKit
 
 Unity 6.0.79f1 / URP 17.0.4向けのLED表示と映像連動照明のプロジェクトです。
 コアは `Packages/com.mizotake.led-wall`、動作するサンプルは `Assets/LEDGallery` にあります。
@@ -65,13 +65,13 @@ Compute＋Lightでは集計用確保量が約99.3%、集計のCPU命令発行時
 Unity 6.0 / URP 17のプロジェクトで、Package Managerの「Install package from git URL…」へ次のURLを入力します。GitコマンドがPATHに必要です。
 
 ```text
-https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main
+https://github.com/MizoTake/UnityLEDKit.git?path=/Packages/com.mizotake.led-wall#main
 ```
 
 `Packages/manifest.json`へ追加する場合の依存エントリーです。
 
 ```json
-"com.mizotake.led-wall": "https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main"
+"com.mizotake.led-wall": "https://github.com/MizoTake/UnityLEDKit.git?path=/Packages/com.mizotake.led-wall#main"
 ```
 
 Package Managerの `LED Wall for URP` > Samplesから `LED Gallery` をImportします。作成されたフォルダー内の `Scenes/LEDGallery.unity` を開いてPlayしてください。
@@ -106,7 +106,7 @@ unity status --json
 ./Tools/Export-Upm.ps1
 ./Tools/Verify-Distribution.ps1
 ./Tools/Verify-Consumer.ps1
-./Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDSystem.git?path=/Packages/com.mizotake.led-wall#main'
+./Tools/Verify-Consumer.ps1 -PackageUrl 'https://github.com/MizoTake/UnityLEDKit.git?path=/Packages/com.mizotake.led-wall#main'
 ```
 
 READMEのGIFを撮り直す場合は、LEDGalleryをPlayし、VideoPlayerの準備完了後に `./Tools/Record-ReadmePreview.ps1` を実行します。UnityCLI経由で実描画を記録し、FFmpegでGIFへ変換します。撮影中だけカメラの構図を変更し、終了後に戻します。動画のフレームが進まない場合はエラーにして、静止したGIFの出力を防ぎます。

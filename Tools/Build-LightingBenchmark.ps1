@@ -29,7 +29,7 @@ buildTick = () => {
     var frameTiming = UnityEditor.PlayerSettings.enableFrameTimingStats;
     try {
         UnityEditor.PlayerSettings.enableFrameTimingStats = true;
-        var report = UnityEditor.BuildPipeline.BuildPlayer(new UnityEditor.BuildPlayerOptions { scenes = new[] { "Assets/LEDGallery/Scenes/LEDGallery.unity" }, locationPathName = "Builds/LightingBenchmark/UnityLEDSystem.exe", target = UnityEditor.BuildTarget.StandaloneWindows64, options = UnityEditor.BuildOptions.Development });
+        var report = UnityEditor.BuildPipeline.BuildPlayer(new UnityEditor.BuildPlayerOptions { scenes = new[] { "Assets/LEDGallery/Scenes/LEDGallery.unity" }, locationPathName = "Builds/LightingBenchmark/UnityLEDKit.exe", target = UnityEditor.BuildTarget.StandaloneWindows64, options = UnityEditor.BuildOptions.Development });
         System.IO.File.WriteAllText(path, "{\"result\":\"" + report.summary.result + "\",\"errors\":" + report.summary.totalErrors + ",\"warnings\":" + report.summary.totalWarnings + "}");
     } catch (System.Exception e) { System.IO.File.WriteAllText(path, "{\"result\":\"Exception\"}"); UnityEngine.Debug.LogException(e); }
     finally { UnityEditor.PlayerSettings.enableFrameTimingStats = frameTiming; UnityEditor.AssetDatabase.SaveAssets(); UnityEditor.AssetDatabase.DeleteAsset("Assets/LEDWallBenchmarkInstrumentation"); }

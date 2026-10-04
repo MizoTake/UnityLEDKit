@@ -2,7 +2,7 @@ param([ValidateRange(1, 5)][int]$Runs = 3)
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing
 $projectRoot = Split-Path $PSScriptRoot -Parent
-$executable = Join-Path $projectRoot 'Builds/LightingBenchmark/UnityLEDSystem.exe'
+$executable = Join-Path $projectRoot 'Builds/LightingBenchmark/UnityLEDKit.exe'
 if (!(Test-Path -LiteralPath $executable)) { throw 'Run Build-LightingBenchmark.ps1 first.' }
 foreach ($run in 1..$Runs) {
     foreach ($mode in @('Blit', 'Compute', 'Spill')) {
